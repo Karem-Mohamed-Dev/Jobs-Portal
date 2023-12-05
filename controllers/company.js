@@ -6,7 +6,7 @@ exports.getCompanyDetails = async (req, res, next) => {
     const { companyId } = req.params;
     const compantFilter = ["-password", "-updatedAt", "-__v"];
     const jobFilter = ["-company", '-application', '-__v', "-updatedAt"];
-    
+
     try {
         const company = await Company.findById(companyId, compantFilter).populate("jobPosts", jobFilter);
         if (!company) return next(errorHandler(404, "Company with this id was not found"));
@@ -97,9 +97,12 @@ exports.addJob = async (req, res, next) => {
 }
 
 exports.editJob = async (req, res, next) => {
+    const user = req.user;
     const { jobId } = req.params;
     const { jobTitle, JobType, location, salary, description, requirements } = req.body;
     const query = {};
+
+
 
     if (jobTitle) query.jobTitle = jobTitle;
     if (JobType) query.JobType = JobType;
@@ -110,10 +113,16 @@ exports.editJob = async (req, res, next) => {
     if (requirements) query.requirements = requirements;
 
     try {
-        const job = await Job.findByIdAndUpdate(jobId, query, { new: true });
+        const job = await Job.findById(jobId);
+
+        if (user._id !== job.company.toString()) return next(errorHandler(401, "Not Authorized"));
+
         if (!job)
             return next(errorHandler(404, "Job with this id not found"));
-        res.status(200).json(job);
+
+        const result = await Job.findOneAndUpdate({ _id: jobId }, query, { new: true });
+
+        res.status(200).json(result);
     } catch (error) {
         next(error);
     }

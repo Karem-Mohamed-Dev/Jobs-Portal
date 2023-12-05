@@ -4,7 +4,7 @@ const { errorHandler } = require("../utils/error");
 exports.getAllJobs = async (req, res, next) => {
     const page = +req.query.page || 1;
     const pageLimit = 20;
-    const jobFilter = ["-application", "-__v", "-updatedAt"];
+    const jobFilter = ["-__v", "-updatedAt"];
     const companyFilter = ['name', 'profileUrl'];
 
     try {
@@ -18,7 +18,7 @@ exports.getAllJobs = async (req, res, next) => {
 
 exports.getJob = async (req, res, next) => {
     const { jobId } = req.params;
-    const jobFilter = ["-application", "-__v", "-updatedAt"];
+    const jobFilter = ["-__v", "-updatedAt"];
     const companyFilter = ["name", "profileUrl"];
 
     try {
@@ -34,7 +34,7 @@ exports.jobSearch = async (req, res, next) => {
     const { jobTitle, salary, location, jobType, experienceLevel } = req.query;
     const page = +req.query.page || 1;
     const pageLimit = 20;
-    const jobFilter = ["-application", "-__v", "-updatedAt"];
+    const jobFilter = ["-__v", "-updatedAt"];
     const companyFilter = ['name', 'profileUrl'];
     const sort = req.query.sort || "-createdAt"
 
